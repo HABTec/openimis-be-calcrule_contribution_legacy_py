@@ -7,7 +7,7 @@ from product.test_helpers import create_test_product
 from policy.test_helpers import create_test_policy
 from contract.models import Contract, ContractDetails
 from core.models import TechnicalUser, User
-from core.models.openimis_graphql_test_case import openIMISGraphQLTestCase
+from core.models.openimis_graphql_test_case import openIMISGraphQLTestCase, BaseTestContext
 from core.test_helpers import create_test_interactive_user
 from policyholder.tests.helpers import create_test_policy_holder_insuree, create_test_policy_holder
 from contribution_plan.tests.helpers import create_test_contribution_plan, \
@@ -34,9 +34,6 @@ class MutationTestContract(openIMISGraphQLTestCase):
         query=contract_schema.Query,
     )
 
-    class BaseTestContext:
-        def __init__(self, user):
-            self.user = user
 
     class AnonymousUserContext:
         user = mock.Mock(is_anonymous=True)
@@ -48,7 +45,7 @@ class MutationTestContract(openIMISGraphQLTestCase):
         if not cls.user:
             cls.user = create_test_interactive_user(username='admin')
         # some test data so as to created contract properly
-        cls.user_token = get_token(cls.user, cls.BaseTestContext(user=cls.user))
+        cls.user_token = BaseTestContext(user=cls.user).get_jwt()
 
         cls.income = 500
         cls.rate = 5
@@ -228,7 +225,7 @@ class MutationTestContract(openIMISGraphQLTestCase):
 
     def execute_query(self, query, context=None):
         if context is None:
-            context = self.BaseTestContext(self.user)
+            context = BaseTestContext(self.user).get_request()
 
         query_result = self.graph_client.execute(query, context=context)
         query_data = query_result['data']
@@ -262,7 +259,7 @@ class MutationTestContract(openIMISGraphQLTestCase):
 
     def execute_mutation(self, mutation, context=None):
         if context is None:
-            context = self.BaseTestContext(self.user)
+            context = BaseTestContext(self.user).get_request()
 
         mutation_result = self.graph_client.execute(mutation, context=context)
         return mutation_result
