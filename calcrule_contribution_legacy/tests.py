@@ -22,7 +22,7 @@ import uuid
 from graphql_jwt.shortcuts import get_token
 from calcrule_contribution_legacy.calculation_rule import ContributionPlanCalculationRuleProductModeling
 import datetime
-
+from core.models.openimis_graphql_test_case import BaseTestContext
 
 class MutationTestContract(openIMISGraphQLTestCase):
     GRAPHQL_URL = f'/{settings.SITE_ROOT()}graphql'
@@ -34,9 +34,6 @@ class MutationTestContract(openIMISGraphQLTestCase):
         query=contract_schema.Query,
     )
 
-
-    class AnonymousUserContext:
-        user = mock.Mock(is_anonymous=True)
 
     @classmethod
     def setUpClass(cls):
