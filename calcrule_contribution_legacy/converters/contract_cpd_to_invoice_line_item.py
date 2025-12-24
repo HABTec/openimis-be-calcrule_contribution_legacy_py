@@ -62,8 +62,8 @@ class ContractCpdToLineItemConverter(object):
     @classmethod
     def build_discount(cls, invoice_line_item, contract_cpd):
         policy = contract_cpd.policy
-        if policy.stage == Policy.STAGE_RENEWED:
-            invoice_line_item["discount"] = policy.product.renewal_discount_perc
+        # if policy.stage == Policy.STAGE_RENEWED:
+        #     invoice_line_item["discount"] = policy.product.renewal_discount_perc
 
     @classmethod
     def build_tax(cls, invoice_line_item):
